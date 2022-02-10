@@ -2,37 +2,53 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 let id = 0;
-const defultRout = "/movie";
-const movieArray = [];
+const defaultRout = "/movie";
+let movieArray = [];
 
 function generateId() {
   return ++id;
 }
 
-function getMovieByID(id) {
-  return movieArray.find((movie) => {
-    return movie.id === parseInt(id);
-  });
+function getMovieIndexByID(id){
+    return movieArray.findIndex(movie => movie.id ===parseInt(id));
 }
 
-app.get(defultRout, (req, res) => {
+app.get(defaultRout, (req, res) => {
   res.send(movieArray);
 });
 
-app.get(defultRout + "/:id", (req, res) => {
-    const movie = getMovieByID(req.params.id);
-  res.send(getMovieByID(req.params.id))
+app.get(defaultRout + "/:id", (req, res) => {
+  res.send(movieArray.find((movie) => {
+    return movie.id === parseInt(req.params.id);
+  }));
 });
 
-app.post(defultRout, (req, res) => {
+app.post(defaultRout, (req, res) => {
   const movie = req.body;
   movie.id = generateId();
   movieArray.push(movie);
   res.send(movie);
 });
 
-app.delete(defultRout + "/:id", (req, res) => {
-    const index = getMovieByID
+app.put(defaultRout + "/:id", (req,res)=>{
+    const editedMovie = req.body
+    const id = req.params.id;
+    editedMovie.id = parseInt(id)
+    movieArray[getMovieIndexByID(id)]=editedMovie;
+
+    res.send(req.body)
+});
+
+app.patch(defaultRout + "/:id", (req, res) => {
+    const editedMovie = req.body;
+    const id = req.params.id;
+  });
+
+app.delete(defaultRout + "/:id", (req, res) => {
+    movieArray = movieArray.filter((movie)=>{ 
+        return movie.id !== parseInt(req.params.id);
+    });
+    res.send("");
 });
 
 app.listen(8080);
