@@ -9,8 +9,14 @@ function generateId() {
   return ++id;
 }
 
-function getMovieIndexByID(id){
-    return movieArray.findIndex(movie => movie.id ===parseInt(id));
+function getMovieIndexByID(id) {
+  return movieArray.findIndex((movie) => movie.id === parseInt(id));
+}
+
+function getMovieByID(id) {
+  return movieArray.find((movie) => {
+    return movie.id === parseInt(id);
+  });
 }
 
 app.get(defaultRout, (req, res) => {
@@ -18,9 +24,7 @@ app.get(defaultRout, (req, res) => {
 });
 
 app.get(defaultRout + "/:id", (req, res) => {
-  res.send(movieArray.find((movie) => {
-    return movie.id === parseInt(req.params.id);
-  }));
+  res.send(getMovieByID(req.params.id));
 });
 
 app.post(defaultRout, (req, res) => {
@@ -30,25 +34,33 @@ app.post(defaultRout, (req, res) => {
   res.send(movie);
 });
 
-app.put(defaultRout + "/:id", (req,res)=>{
-    const editedMovie = req.body
-    const id = req.params.id;
-    editedMovie.id = parseInt(id)
-    movieArray[getMovieIndexByID(id)]=editedMovie;
-
-    res.send(req.body)
+app.put(defaultRout + "/:id", (req, res) => {
+  const editedMovie = req.body;
+  const id = req.params.id;
+  editedMovie.id = parseInt(id);
+  movieArray[getMovieIndexByID(id)] = editedMovie;
+  res.send(req.body);
 });
 
 app.patch(defaultRout + "/:id", (req, res) => {
-    const editedMovie = req.body;
-    const id = req.params.id;
-  });
+  const id = req.params.id;
+  const movieToEdit = getMovieByID(id);
+  const newMovieInfo = req.body;
+  for (let key in newMovieInfo) {
+    movieToEdit[key] = newMovieInfo[key];
+  }
+  movieToEdit.id = parseInt(id);
+  movieArray[getMovieIndexByID(id)] = movieToEdit;
+  res.send(movieToEdit);
+});
 
 app.delete(defaultRout + "/:id", (req, res) => {
-    movieArray = movieArray.filter((movie)=>{ 
-        return movie.id !== parseInt(req.params.id);
-    });
-    res.send("");
+  //Maybe there is a better way that will allow
+  //me to create the array intself with const not let...
+  movieArray = movieArray.filter((movie) => {
+    return movie.id !== parseInt(req.params.id);
+  });
+  res.send("");
 });
 
 app.listen(8080);
