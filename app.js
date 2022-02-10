@@ -56,11 +56,21 @@ app.patch(defaultRout + "/:id", (req, res) => {
 
 app.delete(defaultRout + "/:id", (req, res) => {
   //Maybe there is a better way that will allow
-  //me to create the array intself with const not let...
+  //me to create the movie array intself with const not let...
   movieArray = movieArray.filter((movie) => {
     return movie.id !== parseInt(req.params.id);
   });
   res.send("");
 });
+
+//This works. Allows me to delete by id while keeping movieArray as const
+//There are some bugs though. For example deleting with id that doesn't exist
+//Will delete the last object from array.
+//TODO: Fix it with some coditional checks before it deletes anything.
+
+// app.delete(defaultRout + "/:id", (req, res) => {
+//     movieArray.splice(getMovieIndexByID(req.params.id), 1)
+//     res.send("");
+// });
 
 app.listen(8080);
