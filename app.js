@@ -39,7 +39,7 @@ app.put(defaultRout + "/:id", (req, res) => {
   const id = req.params.id;
   editedMovie.id = parseInt(id);
   movieArray[getMovieIndexByID(id)] = editedMovie;
-  res.send(req.body);
+  res.send(editedMovie);
 });
 
 app.patch(defaultRout + "/:id", (req, res) => {
