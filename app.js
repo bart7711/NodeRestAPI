@@ -2,12 +2,8 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 let id = 0;
-const defaultRout = "/movie";
+const defaultRout = "/movies";
 let movieArray = [];
-
-function generateId() {
-  return ++id;
-}
 
 function getMovieIndexByID(id) {
   return movieArray.findIndex((movie) => movie.id === parseInt(id));
@@ -20,16 +16,20 @@ function getMovieByID(id) {
 }
 
 app.get(defaultRout, (req, res) => {
-  res.send(movieArray);
+  res.send({data: movieArray});
 });
 
 app.get(defaultRout + "/:id", (req, res) => {
   res.send(getMovieByID(req.params.id));
 });
 
+app.get("", (req,res)=>{
+  res.sendFile(__dirname+"/public/main.html");
+})
+
 app.post(defaultRout, (req, res) => {
   const movie = req.body;
-  movie.id = generateId();
+  movie.id = ++id;
   movieArray.push(movie);
   res.send(movie);
 });
@@ -42,16 +42,24 @@ app.put(defaultRout + "/:id", (req, res) => {
   res.send(editedMovie);
 });
 
+// app.patch(defaultRout + "/:id", (req, res) => {
+//   const id = req.params.id;
+//   const movieToEdit = getMovieByID(id);
+//   const newMovieInfo = req.body;
+//   for (let key in newMovieInfo) {
+//     movieToEdit[key] = newMovieInfo[key];
+//   }
+//   movieToEdit.id = parseInt(id);
+//   movieArray[getMovieIndexByID(id)] = movieToEdit;
+//   res.send(movieToEdit);
+// });
+
 app.patch(defaultRout + "/:id", (req, res) => {
-  const id = req.params.id;
   const movieToEdit = getMovieByID(id);
-  const newMovieInfo = req.body;
-  for (let key in newMovieInfo) {
-    movieToEdit[key] = newMovieInfo[key];
-  }
-  movieToEdit.id = parseInt(id);
-  movieArray[getMovieIndexByID(id)] = movieToEdit;
-  res.send(movieToEdit);
+  const id = req.params.id;
+  const movieToUpdateWith ={ ...movieToEdit, ...req.body, id:id}
+  movies[movieArray.id]=movieToUpdateWith;
+  res.send(movieToUpdateWith);
 });
 
 app.delete(defaultRout + "/:id", (req, res) => {
@@ -73,4 +81,6 @@ app.delete(defaultRout + "/:id", (req, res) => {
 //     res.send("");
 // });
 
-app.listen(8080);
+app.listen(8080,()=>{
+  console.log("App hasad been started")
+});
