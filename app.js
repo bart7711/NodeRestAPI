@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 app.use(express.json());
+app.use(express.static("public"));
 let id = 0;
 const defaultRout = "/movies";
 let movieArray = [];
@@ -24,7 +25,7 @@ app.get(defaultRout + "/:id", (req, res) => {
 });
 
 app.get("", (req,res)=>{
-  res.sendFile(__dirname+"/public/main.html");
+  res.sendFile(__dirname+"/public/main/main.html");
 })
 
 app.post(defaultRout, (req, res) => {
